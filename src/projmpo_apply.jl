@@ -28,7 +28,13 @@ mutable struct ProjMPOApply <: AbstractProjMPO
   LR::Vector{ITensor}
 end
 
-function ProjMPOApply(psi0::MPS, H::MPO)
+function position!(P::ProjMPOApply, psi::Union{MPS,MPO}, pos::Int)
+  makeL!(P, psi, pos - 1)
+  makeR!(P, psi, pos + nsite(P))
+  return P
+end
+
+function ProjMPOApply(psi0::Union{MPS,MPO}, H::MPO)
   return ProjMPOApply(0, length(H) + 1, 2, psi0, H, Vector{ITensor}(undef, length(H)))
 end
 
@@ -41,7 +47,7 @@ function set_nsite!(P::ProjMPOApply, nsite)
   return P
 end
 
-function makeL!(P::ProjMPOApply, psi::MPS, k::Int)
+function makeL!(P::ProjMPOApply, psi::Union{MPS,MPO}, k::Int)
   # Save the last `L` that is made to help with caching
   # for DiskProjMPO
   ll = P.lpos
@@ -65,7 +71,7 @@ function makeL!(P::ProjMPOApply, psi::MPS, k::Int)
   return P
 end
 
-function makeR!(P::ProjMPOApply, psi::MPS, k::Int)
+function makeR!(P::ProjMPOApply, psi::Union{MPS,MPO}, k::Int)
   # Save the last `R` that is made to help with caching
   # for DiskProjMPO
   rl = P.rpos
