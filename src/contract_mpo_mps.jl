@@ -4,11 +4,7 @@ function contractmpo_solver(; kwargs...)
     for j in (PH.lpos + 1):(PH.rpos - 1)
       v *= PH.psi0[j]
     end
-    #@show PH.lpos
-    #@show PH.rpos
-    #@show inds(v)
     Hpsi0 = contract(PH, v)
-    #@show inds(Hpsi0)
     return Hpsi0, nothing
   end
   return solver
